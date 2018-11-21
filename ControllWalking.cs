@@ -76,46 +76,6 @@ public class ControllWalking : MonoBehaviour {
 	[System.NonSerialized]
 	public Quaternion currentRightRotation, currentLeftRotation;
 
-/*
-	float getMovementSpeedAngle(){
-		// Angle comparison
-		// Compare change the y rotation in both trackers given a certain threshold.
-		
-
-		// current right/ left roations are set by the trackers on every pose change.
-		// last right/ left rotations are set at the end of the last speed calculation. 
-
-		double currentRightDirection = (currentRightRotation*Vector3.up).normalized.y;
-		double currentLeftDirection = (currentLeftRotation*Vector3.up).normalized.y;
-		
-		double deltaLeft = (lastLeftDirection - currentLeftDirection) * trackerMod*2;
-		double deltaRight = (lastRightDirection - currentRightDirection) * trackerMod*2;
-		
-		lastLeftDirection = currentLeftDirection;
-		lastRightDirection = currentRightDirection;
-
-		
-		if (deltaLeft*deltaLeft < tolerance*tolerance || deltaRight*deltaRight < tolerance*tolerance){
-			//One or both feet did not move. Speed is 0
-			return 0;
-		}	
-		if (deltaLeft*deltaRight > 0){
-			//Both variations where in the same direction (did the player jump?...)
-			return 0; //lets not move.
-		}
-		
-
-		//Calculate speed - average of the squares of deltas * mod.
-		float speed = (float)((deltaLeft*deltaLeft + deltaRight*deltaRight) + lastMoveSpeed)/2;
-		if (speed < tolerance) return 0;
-		speed = Mathf.Max(speed, minSpeed);
-		
-		float rSpeed = (speed+lastMoveSpeed)/2;
-		lastMoveSpeed = speed;
-
-		return rSpeed;
-}*/
-
 	void changeDirection(){
 		/* 	Average the rotation on up axis of both trakers. Apply to character	
 			Notes: Z is up */
