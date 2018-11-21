@@ -7,15 +7,15 @@ using Valve.VR;
 public class ControllWalking : MonoBehaviour {
 
 	public Transform playerCharacter;
-	public bool iShouldMove, iShouldTurn;
-	
+
 	public double currentRightPosition, currentLeftPosition; //attempting to get these as doubles to avoid errors
 	
-	[System.NonSerialized]
 	public float maxWalkSpeed = 50.0f;
 
 	double lastRightPosition, lastLeftPosition;
 	float moveSpeed, lastMoveSpeed = 0;
+
+	private bool iShouldTurn;
 
 	//List<float> lastMoveSpeeds;
 
@@ -45,6 +45,11 @@ public class ControllWalking : MonoBehaviour {
 
 	public float tolerance;
 
+	public static double absD(double number) {
+        double num = number;           
+        if(number<0) num = -1*number;
+        return num;
+ }
 
 	float getMovementSpeed(){
 
@@ -56,13 +61,13 @@ public class ControllWalking : MonoBehaviour {
 		lastLeftPosition = currentLeftPosition;
 		lastRightPosition = currentRightPosition;
 
-		if (deltaLeft*deltaLeft + deltaRight*deltaRight < tolerance){
+		if (absD(deltaLeft) + absD(deltaRight) < tolerance){
 			//variations were too small.
 			return 0; //lets not move.
 		}
 		
 		//Calculate speed - average of the squares of deltas * mod.
-		float speed = (float)((deltaLeft*deltaLeft + deltaRight*deltaRight)*speedMod);
+		float speed = (float)((absD(deltaLeft)+absD(deltaRight))*speedMod);
 		speed = Mathf.Max(speed, minSpeed);
 
 		float rSpeed = 0.3f*speed + 0.7f*lastMoveSpeed;
@@ -80,7 +85,7 @@ public class ControllWalking : MonoBehaviour {
 		/* 	Average the rotation on up axis of both trakers. Apply to character	
 			Notes: Z is up */
 		//To do: dampening on speed if there is a sharp change in rotation
-		Quaternion tRotation = Quaternion.Lerp(currentLeftRotation, currentRightRotation, 0.5f);
+		Quaternion tRotation = Quaternion.Slerp(currentLeftRotation, currentRightRotation, 0.5f);
 		Vector3 playerDirection = tRotation*Vector3.forward;
 		playerDirection.y = 0;
 		playerDirection.Normalize();
@@ -94,21 +99,28 @@ public class ControllWalking : MonoBehaviour {
 		if (!inited) InitPositions();
 		else {
 			//Rotation
+			iShouldTurn = !iShouldTurn;
 			if (iShouldTurn) changeDirection();
-			if (iShouldMove) {
-				playerCharacter.GetComponent<MovementPlayer>().maxWalkSpeed = maxWalkSpeed; //DEBUG!
-				moveSpeed = getMovementSpeed();
-				if (moveSpeed > 0) {
+
+			//Speed
+			playerCharacter.GetComponent<MovementPlayer>().maxWalkSpeed = maxWalkSpeed; //DEBUG!
+			moveSpeed = getMovementSpeed();
+			if (moveSpeed > 0) {
+				playerCharacter.GetComponent<MovementPlayer>().UpdateMovement(moveSpeed);
+				delay = 0;
+				}
+			else {delay ++;
+				if (delay> maxDelay){
 					playerCharacter.GetComponent<MovementPlayer>().UpdateMovement(moveSpeed);
 					delay = 0;
-					}
-				else {delay ++;
-					if (delay> maxDelay){
-						playerCharacter.GetComponent<MovementPlayer>().UpdateMovement(moveSpeed);
-						delay = 0;
-					}}
+				}
 			}
 		}
+	}
+
+	public float getTrackerPosition(bool left, float scl){
+		if (left) return (float) currentLeftPosition * scl;
+		else return (float) currentRightPosition * scl;
 	}
 	
 }

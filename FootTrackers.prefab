@@ -54,15 +54,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCharacter: {fileID: 0}
-  iShouldMove: 1
-  iShouldTurn: 1
   currentRightPosition: 0
   currentLeftPosition: 0
+  maxWalkSpeed: 40
   trackerMod: 100
   speedMod: 25
-  minSpeed: 6
+  minSpeed: 5
   maxDelay: 30
-  tolerance: 0.15
+  tolerance: 0.5
 --- !u!114 &114973971083774002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -88,4 +87,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftFoot: 1
-  index: 3
+  index: 1
